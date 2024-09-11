@@ -1,28 +1,30 @@
 import asyncio
-from datetime import date
 import itertools
 import logging
 import uuid
+from datetime import date
 
 from fastapi import APIRouter, Request, Response
 from passlib.hash import bcrypt
-from tortoise.transactions import atomic, in_transaction
-from tortoise.expressions import RawSQL, Q
+from tortoise.expressions import Q, RawSQL
 from tortoise.functions import Sum
+from tortoise.transactions import atomic, in_transaction
 
-from pwncore.models import (
-    Team,
-    Problem,
-    Hint,
-    User,
-    PreEventSolvedProblem,
-    PreEventProblem,
-)
 from pwncore.config import config
+from pwncore.container import docker_client
+from pwncore.models import (
+    Hint,
+    PowerupConfig,
+    PowerupType,
+    PreEventProblem,
+    PreEventSolvedProblem,
+    Problem,
+    Team,
+    User,
+)
 from pwncore.models.container import Container
 from pwncore.models.ctf import SolvedProblem
 from pwncore.models.pre_event import PreEventUser
-from pwncore.container import docker_client
 from pwncore.models.round2 import R2Container, R2Ports, R2Problem
 from pwncore.models.user import MetaTeam
 
@@ -37,7 +39,7 @@ router = APIRouter(prefix="/admin", tags=["admin"])
 if config.development:
     logging.basicConfig(level=logging.INFO)
 
-ADMIN_HASH = "$2b$12$K2LsLGS/Mahksh0V6xZYKOviNEHMv3Of5f1zhyF6CWJ8rJIcKnSqu"
+ADMIN_HASH = "$2b$12$qv1YuaVfPpUmql0MOsgpMuSnto5eaG6q/WyUvFKe/1j3l1YWq8zE6"
 NAMES = [
     "Mimas",
     "Enceladus",
@@ -260,6 +262,7 @@ async def init_db(
     await Team.create(
         name="Triple A battery", secret_hash=bcrypt.hash("chotiwali"), coins=20
     )
+    await Team.create(name="asd", secret_hash=bcrypt.hash("asd"))
     await PreEventUser.create(tag="23BCE1000", email="dd@ff.in")
     await PreEventUser.create(tag="23BRS1000", email="d2d@ff.in")
     await PreEventSolvedProblem.create(user_id="23BCE1000", problem_id="1")
@@ -318,3 +321,60 @@ async def init_db(
     await SolvedProblem.create(team_id=2, problem_id=1)
     await SolvedProblem.create(team_id=2, problem_id=2)
     await SolvedProblem.create(team_id=1, problem_id=2)
+
+
+@router.get("/powerups/activate", tags=["admin"])
+async def create_powerup_config(
+    response: Response,
+    req: Request,
+):
+    if not bcrypt.verify((await req.body()).strip(), ADMIN_HASH):
+        response.status_code = 401
+        return
+
+    # Loop through each powerup and create a config dynamically
+    created_configs = []
+    for powerup_type, max_uses in config.powerup_uses.items():
+        cost = config.powerup_cost.get(
+            powerup_type, 0
+        )  # Get cost from powerup_cost, default to 0 if not found
+        description = config.powerup_descriptions.get(powerup_type, "Not defined")
+
+        # Create the PowerupConfig dynamically
+        powerup_config = await PowerupConfig.create(
+            type=powerup_type,
+            cost=cost,
+            max_uses=max_uses,
+            is_active=True,  # Assuming you want it active by default
+            description=description,
+        )
+        created_configs.append(powerup_config)
+
+    return created_configs  # Return the list of created powerup configs
+
+
+@router.put("/powerups/config/{powerup_type}", tags=["admin"])
+async def update_powerup_config(
+    powerup_type: PowerupType,
+    cost: int,
+    max_uses: int,
+    response: Response,
+    req: Request,
+):
+    if not bcrypt.verify((await req.body()).strip(), ADMIN_HASH):
+        response.status_code = 401
+        return
+    config = await PowerupConfig.get(powerup_type=powerup_type)
+    config.cost = cost
+    config.max_uses = max_uses
+    await config.save()
+    return config
+
+
+@router.get("/powerups/config", tags=["admin"])
+async def get_all_powerup_configs(response: Response, req: Request):
+    if not bcrypt.verify((await req.body()).strip(), ADMIN_HASH):
+        response.status_code = 401
+        return
+    configs = await PowerupConfig.all()
+    return configs
