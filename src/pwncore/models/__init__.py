@@ -19,7 +19,15 @@ from pwncore.models.ctf import (
     SolvedProblem,
     ViewedHint,
 )
-from pwncore.models.powerups import Powerup, Powerup_Pydantic, PowerupType
+from pwncore.models.powerups import (
+    Powerup,
+    Powerup_Pydantic,
+    PowerupConfig,
+    PowerupConfig_Pydantic,
+    PowerupType,
+    TeamPowerup,
+    TeamPowerup_Pydantic,
+)
 from pwncore.models.pre_event import (
     PreEventProblem,
     PreEventProblem_Pydantic,
@@ -62,9 +70,13 @@ __all__ = (
     "R2Container",
     "R2Container_Pydantic",
     "R2AttackRecord",
-    "Powerup",
     "PowerupType",
+    "PowerupConfig",
+    "Powerup",
+    "TeamPowerup",
+    "PowerupConfig_Pydantic",
     "Powerup_Pydantic",
+    "TeamPowerup_Pydantic",
 )
 
 
