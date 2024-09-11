@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from pwncore.routes import ctf, team, auth, admin, leaderboard, round2
+from pwncore.routes import admin, auth, ctf, leaderboard, powerups, round2, team
 
 # from pwncore.config import config
 
@@ -14,5 +14,6 @@ router.include_router(team.router)
 router.include_router(leaderboard.router)
 router.include_router(round2.router)
 router.include_router(admin.router)
+router.include_router(powerups.router)
 # if config.development:
 # router.include_router(admin.router)
