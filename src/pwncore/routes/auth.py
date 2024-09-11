@@ -95,7 +95,7 @@ async def team_login(team_data: AuthBody, response: Response):
         response.status_code = 401
         return {"msg_code": config.msg_codes["wrong_password"]}
 
-    current_time = datetime.datetime.utcnow()
+    current_time = datetime.datetime.now(datetime.UTC)
     expiration_time = current_time + datetime.timedelta(hours=config.jwt_valid_duration)
     token_payload = {"team_id": team.id, "exp": expiration_time}
     token = jwt.encode(token_payload, config.jwt_secret, algorithm="HS256")
