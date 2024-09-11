@@ -41,6 +41,27 @@ msg_codes = {
     "users_not_found": 24,
 }
 
+powerup_cost = {
+    "lucky_draw": 100,
+    "sabotage": 500,
+    "siphon": 200,
+    "gamble": 500,
+}
+
+powerup_uses = {
+    "lucky_draw": 10,
+    "sabotage": 3,
+    "siphon": 2,
+    "gamble": 1,
+}
+
+powerup_descriptions = {
+    "lucky_draw": "Has a 20% chance of getting any other powerup.",
+    "sabotage": "Prevents another team from submitting a flag or viewing another CTF for a 10 minute period.",
+    "siphon": "Steal points from the target team over time for a given duration or until the target team submits a CTF.",
+    "gamble": "Doubles the points of the CTF you will start next. If another team solves it first then they get the double points and you get the normal value of the CTF.",
+}
+
 
 @dataclass
 class Config:
@@ -54,6 +75,9 @@ class Config:
     jwt_valid_duration: int
     hint_penalty: int
     max_members_per_team: int
+    powerup_cost: dict
+    powerup_uses: dict
+    powerup_descriptions: dict
 
 
 config = Config(
@@ -69,4 +93,7 @@ config = Config(
     msg_codes=msg_codes,
     hint_penalty=50,
     max_members_per_team=3,
+    powerup_uses=powerup_uses,
+    powerup_cost=powerup_cost,
+    powerup_descriptions=powerup_descriptions,
 )
