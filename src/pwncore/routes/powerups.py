@@ -131,6 +131,7 @@ async def sabotage(team_name: str, jwt: RequireJwt):
 
 @router.post("/use/airstrike")
 async def airstrike(target: str, jwt: RequireJwt):
+    team_id = jwt["team_id"]
     target_team = await Team.get_or_none(name=target)
     if not target_team:
         raise HTTPException(status_code=404, detail="Target team not found")
@@ -139,6 +140,11 @@ async def airstrike(target: str, jwt: RequireJwt):
         powerup = await use_powerup(PowerupType.AIRSTRIKE, jwt)
         powerup.target_team = target_team
         await powerup.save()
+        shield_is_active = await Powerup.get_or_none(
+            team=team_id, type=PowerupType.SHIELD, expires_at__gt=datetime.now()
+        )
+        if shield_is_active:
+            raise HTTPException(status_code=400, detail="Team protected by Shield")
         await TeamPowerupPoints.create(
             team=target_team,
             type=PowerupType.AIRSTRIKE,
