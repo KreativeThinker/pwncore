@@ -25,8 +25,7 @@ from pwncore.models.powerups import (
     PowerupConfig,
     PowerupConfig_Pydantic,
     PowerupType,
-    TeamPowerup,
-    TeamPowerup_Pydantic,
+    TeamPowerupPoints,
 )
 from pwncore.models.pre_event import (
     PreEventProblem,
@@ -73,10 +72,9 @@ __all__ = (
     "PowerupType",
     "PowerupConfig",
     "Powerup",
-    "TeamPowerup",
     "PowerupConfig_Pydantic",
     "Powerup_Pydantic",
-    "TeamPowerup_Pydantic",
+    "TeamPowerupPoints",
 )
 
 
