@@ -8,17 +8,15 @@ __all__ = (
     "PowerupType",
     "PowerupConfig",
     "PowerupConfig_Pydantic",
-    "TeamPowerup",
     "Powerup_Pydantic",
-    "TeamPowerup_Pydantic",
+    "TeamPowerupPoints",
 )
 
 
 class PowerupType(str, Enum):
-    LUCKY_DRAW = "lucky_draw"
+    AIRSTRIKE = "airstrike"
+    SHIELD = "shield"
     SABOTAGE = "sabotage"
-    GAMBLE = "gamble"
-    SIPHON = "siphon"
 
 
 class PowerupConfig(models.Model):
@@ -37,15 +35,14 @@ class Powerup(models.Model):
         "models.Team", null=True, related_name="targeted_powerups"
     )
     expires_at = fields.DatetimeField(null=True)
-    profit = fields.FloatField(default=0)
 
 
-class TeamPowerup(models.Model):
-    team = fields.ForeignKeyField("models.Team", related_name="team_powerups")
-    powerup_type = fields.CharEnumField(PowerupType)
-    uses_left = fields.IntField()
+class TeamPowerupPoints(models.Model):
+    team = fields.ForeignKeyField("models.Team", related_name="team_powerup_points")
+    type = fields.CharEnumField(PowerupType)
+    used_at = fields.DatetimeField(null=True)
+    points = fields.IntField(default=0)
 
 
 PowerupConfig_Pydantic = pydantic_model_creator(PowerupConfig)
 Powerup_Pydantic = pydantic_model_creator(Powerup)
-TeamPowerup_Pydantic = pydantic_model_creator(TeamPowerup)
