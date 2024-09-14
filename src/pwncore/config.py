@@ -42,24 +42,21 @@ msg_codes = {
 }
 
 powerup_cost = {
-    "lucky_draw": 100,
     "sabotage": 500,
-    "siphon": 200,
-    "gamble": 500,
+    "airstrike": 200,
+    "shield": 200,
 }
 
 powerup_uses = {
-    "lucky_draw": 10,
-    "sabotage": 3,
-    "siphon": 2,
-    "gamble": 1,
+    "sabotage": 1,
+    "airstrike": 3,
+    "shield": 3,
 }
 
 powerup_descriptions = {
-    "lucky_draw": "Has a 20% chance of getting any other powerup.",
-    "sabotage": "Prevents another team from submitting a flag or viewing another CTF for a 10 minute period.",
-    "siphon": "Steal points from the target team over time for a given duration or until the target team submits a CTF.",
-    "gamble": "Doubles the points of the CTF you will start next. If another team solves it first then they get the double points and you get the normal value of the CTF.",
+    "sabotage": "Steal 400 points from target team",
+    "airstrike": "Reduce target team's points by 300",
+    "shield": "Protect against airstrikes for 10 minutes",
 }
 
 
@@ -82,7 +79,8 @@ class Config:
 
 config = Config(
     development=True,
-    db_url="sqlite://:memory:",
+    # db_url="sqlite://:memory:",
+    db_url="sqlite:///home/ghost/tmp/testing.sqlite",
     docker_url=None,  # None for default system docker
     # Or set it to an arbitrary URL for testing without Docker
     # docker_url="http://google.com",
