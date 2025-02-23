@@ -62,7 +62,7 @@ Before you begin, ensure you have met the following requirements:
 1. Start:
 
    ```bash
-   uvicorn pwncore:app --reload
+   uvicorn pwncore:app --reload --port 8080
 
    # OR
 
